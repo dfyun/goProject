@@ -124,6 +124,9 @@ func width(width int, value string) string {
 
 // PrintUsage prints usage of cmd to w
 func PrintUsage(w io.Writer, cmd *Command) {
+	for _, c := range cmd.Commands {
+		fmt.Printf("%-12s%s\n", c.Name(), c.Short)
+	}
 	buildCommandText(cmd)
 	bw := bufio.NewWriter(w)
 	tmpl(bw, usageTemplate, makeTmplData(cmd))
@@ -152,6 +155,9 @@ type tmplData struct {
 	*CommandEnvHolder
 }
 
+// makeTmplData finds the maximum width of the command column, sets it as the
+// width for all commands, and returns a tmplData struct containing
+// the commands and their environment holders.
 func makeTmplData(cmd *Command) tmplData {
 	// Minimum width of the command column
 	width := 12

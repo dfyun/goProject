@@ -50,7 +50,7 @@ type Command struct {
 	Commands []*Command
 }
 
-// LongName returns the command's long name: all the words in the usage line between first word (e.g. "xray") and a flag or argument,
+// LongName returns the command's long name : all the words in the usage line between first word (e.g. "xray") and a flag or argument,
 func (c *Command) LongName() string {
 	name := c.UsageLine
 	if i := strings.Index(name, " ["); i >= 0 {
