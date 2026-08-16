@@ -6,6 +6,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"text/template"
 )
 
 // Copyright 2011 The Go Authors. All rights reserved.
@@ -40,8 +41,52 @@ BigCmdLoop:
 		fmt.Println("bigCmd short:", bigCmd.Short)
 		fmt.Println("bigCmd cmd Long name:", bigCmd.LongName(), "short name:", bigCmd.Name())
 		fmt.Println("---------------")
+		fmt.Println("info CommandEnv.CommandsWidth:", CommandEnv.CommandsWidth) // Only the package "help" will set the value of this variable
+
+		maxLongNameWidth := 0
 		for _, cmd := range bigCmd.Commands {
-			fmt.Println("bigCmd.Commands: Long name:", cmd.LongName(), "short name:", cmd.Name())
+			if len(cmd.LongName()) > maxLongNameWidth {
+				maxLongNameWidth = len(cmd.LongName())
+			}
+			// 渲染模板
+			// tmpl, err := template.New("usage").Parse(cmd.UsageLine)
+			// if err != nil {
+			// 	panic(err)
+			// }
+			// fmt.Printf("Template Data: %+v\n", makeTmplData(cmd))
+			// var renderedUsage strings.Builder
+			// err = tmpl.Execute(&renderedUsage, makeTmplData(cmd))
+			// if err != nil {
+			// 	panic(err)
+			// }
+
+			// // 打印格式化输出
+			// fmt.Printf("bigCmd.Commands: [%02d] Long name: %-*s\n%*sshort name: %s\n%*sshort: %s\n\n",
+			// 	i, maxLongNameWidth, cmd.LongName(),
+			// 	maxLongNameWidth+13, "", cmd.Name(),
+			// 	maxLongNameWidth+18, "", renderedUsage.String())
+		}
+		fmt.Println("info maxLongNameWidth:", maxLongNameWidth)
+
+		for i, cmd := range bigCmd.Commands {
+			// Render the template
+			tmpl, err := template.New("usage").Parse(cmd.UsageLine)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Printf("Template Data: %+v\n", makeTmplData(cmd))
+			var renderedUsage strings.Builder
+			err = tmpl.Execute(&renderedUsage, makeTmplData(cmd))
+			if err != nil {
+				panic(err)
+			}
+
+			// Print formatted output
+			fmt.Printf("bigCmd.Commands: [%02d] Long name: %-*s\n%*sshort name: %s\n%*sshort: %s\n\n",
+				i, maxLongNameWidth, cmd.LongName(),
+				maxLongNameWidth+13, "", cmd.Name(),
+				maxLongNameWidth+18, "", renderedUsage.String())
+
 			if cmd.Name() != args[0] {
 				continue
 			}
