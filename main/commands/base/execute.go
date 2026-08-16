@@ -14,13 +14,18 @@ import (
 
 // Execute execute the commands
 func Execute() {
-	flag.Parse()
+	flag.Parse() // flag参数是以-开头的，例如-c=config.json(和-c config.json等价)
 	args := flag.Args()
+	fmt.Printf("flag args num %d\n", len(args))
+	fmt.Printf("flag args %v\n", flag.Args())
+	fmt.Printf("os args num %d\n", len(os.Args))
+	fmt.Printf("os args %v\n", os.Args)
 	if len(args) < 1 {
 		PrintUsage(os.Stderr, RootCommand)
 		return
 	}
 	cmdName := args[0] // for error messages
+	fmt.Printf("cmdName:%s\n", cmdName)
 	if args[0] == "help" {
 		Help(os.Stdout, args[1:])
 		return
@@ -28,7 +33,15 @@ func Execute() {
 
 BigCmdLoop:
 	for bigCmd := RootCommand; ; {
+		fmt.Println("---------------")
+		fmt.Println("bigCmd LongName:", bigCmd.LongName())
+		fmt.Println("bigCmd UsageLine:", bigCmd.UsageLine)
+		fmt.Println("bigCmd long:", strings.TrimSpace(bigCmd.Long))
+		fmt.Println("bigCmd short:", bigCmd.Short)
+		fmt.Println("bigCmd cmd Long name:", bigCmd.LongName(), "short name:", bigCmd.Name())
+		fmt.Println("---------------")
 		for _, cmd := range bigCmd.Commands {
+			fmt.Println("bigCmd.Commands: Long name:", cmd.LongName(), "short name:", cmd.Name())
 			if cmd.Name() != args[0] {
 				continue
 			}
