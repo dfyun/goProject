@@ -74,7 +74,7 @@ BigCmdLoop:
 			if err != nil {
 				panic(err)
 			}
-			fmt.Printf("Template Data: %+v\n", makeTmplData(cmd))
+
 			var renderedUsage strings.Builder
 			err = tmpl.Execute(&renderedUsage, makeTmplData(cmd))
 			if err != nil {
@@ -82,10 +82,11 @@ BigCmdLoop:
 			}
 
 			// Print formatted output
-			fmt.Printf("bigCmd.Commands: [%02d] Long name: %-*s\n%*sshort name: %s\n%*sshort: %s\n\n",
+			fmt.Printf("bigCmd.Commands: [%02d] Long name: %-*s\n%*sshort name: %s\n%*sshort: %s, \n%*ssub commands num: %d\n\n",
 				i, maxLongNameWidth, cmd.LongName(),
 				maxLongNameWidth+13, "", cmd.Name(),
-				maxLongNameWidth+18, "", renderedUsage.String())
+				maxLongNameWidth+18, "", renderedUsage.String(),
+				maxLongNameWidth+7, "", len(cmd.Commands))
 
 			if cmd.Name() != args[0] {
 				continue
